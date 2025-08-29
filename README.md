@@ -13,8 +13,10 @@ using OpenAI and posts detailed feedback as pull request comments.
 
 - **AI-Powered Code Review**: Leverages OpenAI's GPT models to provide
   intelligent code analysis
-- **Automated Test Generation**: 🆕 Generates comprehensive unit tests for
-  changed files using AI
+- **Comment-Triggered Test Generation**: 🆕 Generate tests by commenting "write
+  tests" or "/test" on PRs
+- **Automated Test Generation**: Generate comprehensive unit tests for changed
+  files using AI
 - **Pull Request Integration**: Automatically posts review comments directly on
   your PRs
 - **Smart File Filtering**: Excludes irrelevant files (package-lock.json, build
@@ -40,6 +42,8 @@ name: AI Code Review
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+  issue_comment:
+    types: [created]
 
 permissions:
   contents: read
@@ -72,6 +76,25 @@ Add your OpenAI API key as a repository secret named `OPENAI_API_KEY`.
 
 The action will automatically review your code changes and post a detailed
 comment!
+
+## 🧪 Interactive Test Generation
+
+You can generate tests on-demand by commenting on any pull request:
+
+- **"write tests"** - Generates comprehensive unit tests for all changed files
+- **"generate tests"** - Same as above
+- **"/test"** - Quick command to trigger test generation
+- **"create tests"** - Alternative trigger phrase
+
+The AI will analyze the changed files and post a comment containing generated
+test code that you can copy and save to the suggested file paths.
+
+**Example:**
+
+1. Comment "write tests" on a PR
+2. The bot responds with generated test files in a comment
+3. Copy the test code and save it to your project
+4. Run the tests to verify they work
 
 ## Configuration Options
 
