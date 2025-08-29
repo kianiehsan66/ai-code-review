@@ -6,16 +6,27 @@
 [![CodeQL](https://github.com/actions/javascript-action/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/actions/javascript-action/actions/workflows/codeql-analysis.yml)
 [![Coverage](./badges/coverage.svg)](./badges/coverage.svg)
 
-🤖 An intelligent GitHub Action that automatically reviews your code changes using OpenAI and posts detailed feedback as pull request comments.
+🤖 An intelligent GitHub Action that automatically reviews your code changes
+using OpenAI and posts detailed feedback as pull request comments.
 
 ## Features
 
-- **AI-Powered Code Review**: Leverages OpenAI's GPT models to provide intelligent code analysis
-- **Pull Request Integration**: Automatically posts review comments directly on your PRs
-- **Smart File Filtering**: Excludes irrelevant files (package-lock.json, build artifacts, etc.) from review
-- **Customizable Exclusions**: Configure additional file patterns to exclude from review
-- **Detailed Analysis**: Reviews code for quality, security, performance, and best practices
-- **Configurable Models**: Choose between different OpenAI models and adjust parameters
+- **AI-Powered Code Review**: Leverages OpenAI's GPT models to provide
+  intelligent code analysis
+- **Automated Test Generation**: 🆕 Generates comprehensive unit tests for
+  changed files using AI
+- **Pull Request Integration**: Automatically posts review comments directly on
+  your PRs
+- **Smart File Filtering**: Excludes irrelevant files (package-lock.json, build
+  artifacts, etc.) from review
+- **Customizable Exclusions**: Configure additional file patterns to exclude
+  from review
+- **Detailed Analysis**: Reviews code for quality, security, performance, and
+  best practices
+- **Multi-Framework Support**: Supports Jest, pytest, JUnit, and more for test
+  generation
+- **Configurable Models**: Choose between different OpenAI models and adjust
+  parameters
 
 ## Quick Start
 
@@ -39,13 +50,13 @@ jobs:
   ai-review:
     runs-on: ubuntu-latest
     name: AI Code Review
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
+
       - name: AI Code Review
         uses: your-username/ai-code-review@v1
         with:
@@ -59,19 +70,21 @@ Add your OpenAI API key as a repository secret named `OPENAI_API_KEY`.
 
 3. **Create a pull request**
 
-The action will automatically review your code changes and post a detailed comment!
+The action will automatically review your code changes and post a detailed
+comment!
 
 ## Configuration Options
 
-| Input | Description | Required | Default |
-|-------|-------------|----------|---------|
-| `openai-api-key` | OpenAI API key for code review | No | - |
-| `github-token` | GitHub token for posting PR comments | No | `${{ github.token }}` |
-| `openai-model` | OpenAI model to use | No | `gpt-4` |
-| `max-tokens` | Maximum tokens for AI response | No | `1000` |
-| `temperature` | Temperature for AI model (0-2) | No | `0.1` |
-| `post-comment` | Whether to post review as PR comment | No | `true` |
-| `excluded-files` | Comma-separated list of file patterns to exclude | No | `` |
+| Input            | Description                                      | Required | Default               |
+| ---------------- | ------------------------------------------------ | -------- | --------------------- |
+| `openai-api-key` | OpenAI API key for code review                   | No       | -                     |
+| `github-token`   | GitHub token for posting PR comments             | No       | `${{ github.token }}` |
+| `openai-model`   | OpenAI model to use                              | No       | `gpt-4`               |
+| `max-tokens`     | Maximum tokens for AI response                   | No       | `1000`                |
+| `temperature`    | Temperature for AI model (0-2)                   | No       | `0.1`                 |
+| `post-comment`   | Whether to post review as PR comment             | No       | `true`                |
+| `generate-tests` | Whether to generate unit tests for changed files | No       | `false`               |
+| `excluded-files` | Comma-separated list of file patterns to exclude | No       | ``                    |
 
 ## Advanced Configuration
 
@@ -101,7 +114,8 @@ The action will automatically review your code changes and post a detailed comme
 
 The action automatically excludes these types of files from review:
 
-- **Package manager files**: `package-lock.json`, `yarn.lock`, `composer.lock`, etc.
+- **Package manager files**: `package-lock.json`, `yarn.lock`, `composer.lock`,
+  etc.
 - **Build/distribution**: `dist/`, `build/`, `coverage/`, `node_modules/`, etc.
 - **Environment files**: `.env*` files
 - **Generated files**: `*.min.js`, `*.bundle.js`, etc.
@@ -110,7 +124,8 @@ The action automatically excludes these types of files from review:
 
 ## Review Instructions
 
-Customize the AI review criteria by creating a `review-instructions.md` file in your repository root:
+Customize the AI review criteria by creating a `review-instructions.md` file in
+your repository root:
 
 ```markdown
 # Custom Review Instructions
@@ -126,11 +141,36 @@ Please review this code for:
 Focus on providing actionable feedback with specific examples.
 ```
 
-1. :hammer_and_wrench: Install the dependencies
+## Test Generation Instructions
 
-   ```bash
-   npm install
-   ```
+Customize the AI test generation by creating a `test-instructions.md` file in
+your repository root:
+
+```markdown
+# Test Generation Instructions
+
+## Focus Areas
+
+- Test all public methods and functions
+- Include edge cases and error scenarios
+- Mock external dependencies
+- Use descriptive test names
+
+## Custom Requirements
+
+- Focus on testing authentication flows
+- Ensure all database interactions are mocked
+- Include performance tests for critical paths
+```
+
+For detailed information about test generation features, see
+[TEST-GENERATION.md](TEST-GENERATION.md).
+
+## Development
+
+```bash
+npm install
+```
 
 1. :building_construction: Package the JavaScript for distribution
 

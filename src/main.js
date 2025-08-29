@@ -4,6 +4,10 @@ import { getChangedFiles } from './git-diff.js'
 import { reviewChangesWithAI, isAIReviewEnabled } from './ai-reviewer.js'
 import { getActionConfig } from './config.js'
 import { postReviewComment, isPullRequestContext } from './pr-comment.js'
+import {
+  generateTestsForChanges,
+  isTestGenerationEnabled
+} from './test-generator.js'
 
 /**
  * Print diff summary and trigger AI review
@@ -48,6 +52,15 @@ async function processBranchChanges() {
       }
     } else {
       core.info('💡 Add OpenAI API key to enable AI code review.')
+    }
+
+    // Generate unit tests if enabled
+    if (isTestGenerationEnabled()) {
+      await generateTestsForChanges(files)
+    } else {
+      core.info(
+        '🧪 Test generation is disabled. Set generate-tests: true to enable.'
+      )
     }
   } catch (error) {
     core.setFailed(`Failed to process branch changes: ${error.message}`)

@@ -1,6 +1,7 @@
 name: AI Code Review Action
 description:
-  Automatically review code changes using OpenAI and post detailed feedback as PR comments
+  Automatically review code changes using OpenAI and post detailed feedback as
+  PR comments
 author: AI Code Review Team
 
 # Add your action's branding here. This will appear on the GitHub Marketplace.
@@ -43,6 +44,10 @@ inputs:
     description: 'Whether to post review as PR comment'
     required: false
     default: 'true'
+  generate-tests:
+    description: 'Whether to generate unit tests for changed files'
+    required: false
+    default: 'false'
 
 # Define your outputs here.
 outputs:
