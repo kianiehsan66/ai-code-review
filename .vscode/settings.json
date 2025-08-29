@@ -11,5 +11,25 @@
   ],
   "github.copilot.chat.pullRequestDescriptionGeneration.instructions": [
     { "text": "Always include a list of key changes." }
-  ]
+  ],
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#cfabad",
+    "activityBar.background": "#cfabad",
+    "activityBar.foreground": "#15202b",
+    "activityBar.inactiveForeground": "#15202b99",
+    "activityBarBadge.background": "#487a46",
+    "activityBarBadge.foreground": "#e7e7e7",
+    "commandCenter.border": "#15202b99",
+    "sash.hoverBorder": "#cfabad",
+    "statusBar.background": "#bc8b8e",
+    "statusBar.foreground": "#15202b",
+    "statusBarItem.hoverBackground": "#a96b6e",
+    "statusBarItem.remoteBackground": "#bc8b8e",
+    "statusBarItem.remoteForeground": "#15202b",
+    "titleBar.activeBackground": "#bc8b8e",
+    "titleBar.activeForeground": "#15202b",
+    "titleBar.inactiveBackground": "#bc8b8e99",
+    "titleBar.inactiveForeground": "#15202b99"
+  },
+  "peacock.color": "#bc8b8e"
 }
