@@ -3,6 +3,7 @@ import { wait } from './wait.js'
 import { getChangedFiles } from './git-diff.js'
 import { reviewChangesWithAI, isAIReviewEnabled } from './ai-reviewer.js'
 import { getActionConfig } from './config.js'
+import { postReviewComment, isPullRequestContext } from './pr-comment.js'
 
 /**
  * Print diff summary and trigger AI review
@@ -37,7 +38,14 @@ async function processBranchChanges() {
 
     // Perform AI review if enabled
     if (isAIReviewEnabled()) {
-      await reviewChangesWithAI(files)
+      const reviewResults = await reviewChangesWithAI(files)
+
+      // Post review comment to PR if in PR context
+      if (isPullRequestContext()) {
+        await postReviewComment(reviewResults)
+      } else {
+        core.info('💬 Not in PR context - review posted to logs only')
+      }
     } else {
       core.info('💡 Add OpenAI API key to enable AI code review.')
     }

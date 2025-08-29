@@ -1,4 +1,4 @@
-# Create a GitHub Action Using JavaScript
+# AI Code Review Action
 
 [![GitHub Super-Linter](https://github.com/actions/javascript-action/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
 ![CI](https://github.com/actions/javascript-action/actions/workflows/ci.yml/badge.svg)
@@ -6,46 +6,125 @@
 [![CodeQL](https://github.com/actions/javascript-action/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/actions/javascript-action/actions/workflows/codeql-analysis.yml)
 [![Coverage](./badges/coverage.svg)](./badges/coverage.svg)
 
-Use this template to bootstrap the creation of a JavaScript action. :rocket:
+🤖 An intelligent GitHub Action that automatically reviews your code changes using OpenAI and posts detailed feedback as pull request comments.
 
-This template includes compilation support, tests, a validation workflow,
-publishing, and versioning guidance.
+## Features
 
-If you are new, there's also a simpler introduction in the
-[Hello world JavaScript action repository](https://github.com/actions/hello-world-javascript-action).
+- **AI-Powered Code Review**: Leverages OpenAI's GPT models to provide intelligent code analysis
+- **Pull Request Integration**: Automatically posts review comments directly on your PRs
+- **Smart File Filtering**: Excludes irrelevant files (package-lock.json, build artifacts, etc.) from review
+- **Customizable Exclusions**: Configure additional file patterns to exclude from review
+- **Detailed Analysis**: Reviews code for quality, security, performance, and best practices
+- **Configurable Models**: Choose between different OpenAI models and adjust parameters
 
-## Create Your Own Action
+## Quick Start
 
-To create your own action, you can use this repository as a template! Just
-follow the below instructions:
+1. **Add the workflow to your repository**
 
-1. Click the **Use this template** button at the top of the repository
-1. Select **Create a new repository**
-1. Select an owner and name for your new repository
-1. Click **Create repository**
-1. Clone your new repository
+Create `.github/workflows/ai-code-review.yml`:
 
-> [!IMPORTANT]
->
-> Make sure to remove or update the [`CODEOWNERS`](./CODEOWNERS) file! For
-> details on how to use this file, see
-> [About code owners](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners).
+```yaml
+name: AI Code Review
 
-## Initial Setup
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
 
-After you've cloned the repository to your local machine or codespace, you'll
-need to perform some initial setup steps before you can develop your action.
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
 
-> [!NOTE]
->
-> You'll need to have a reasonably modern version of
-> [Node.js](https://nodejs.org) handy (20.x or later should work!). If you are
-> using a version manager like [`nodenv`](https://github.com/nodenv/nodenv) or
-> [`fnm`](https://github.com/Schniz/fnm), this template has a `.node-version`
-> file at the root of the repository that can be used to automatically switch to
-> the correct version when you `cd` into the repository. Additionally, this
-> `.node-version` file is used by GitHub Actions in any `actions/setup-node`
-> actions.
+jobs:
+  ai-review:
+    runs-on: ubuntu-latest
+    name: AI Code Review
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: AI Code Review
+        uses: your-username/ai-code-review@v1
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+2. **Set up your OpenAI API key**
+
+Add your OpenAI API key as a repository secret named `OPENAI_API_KEY`.
+
+3. **Create a pull request**
+
+The action will automatically review your code changes and post a detailed comment!
+
+## Configuration Options
+
+| Input | Description | Required | Default |
+|-------|-------------|----------|---------|
+| `openai-api-key` | OpenAI API key for code review | No | - |
+| `github-token` | GitHub token for posting PR comments | No | `${{ github.token }}` |
+| `openai-model` | OpenAI model to use | No | `gpt-4` |
+| `max-tokens` | Maximum tokens for AI response | No | `1000` |
+| `temperature` | Temperature for AI model (0-2) | No | `0.1` |
+| `post-comment` | Whether to post review as PR comment | No | `true` |
+| `excluded-files` | Comma-separated list of file patterns to exclude | No | `` |
+
+## Advanced Configuration
+
+### Custom File Exclusions
+
+```yaml
+- name: AI Code Review
+  uses: your-username/ai-code-review@v1
+  with:
+    openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+    excluded-files: '*.generated.js,docs/*,legacy/,*.lock'
+```
+
+### Model Configuration
+
+```yaml
+- name: AI Code Review
+  uses: your-username/ai-code-review@v1
+  with:
+    openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+    openai-model: 'gpt-4-turbo'
+    max-tokens: '2000'
+    temperature: '0.2'
+```
+
+## Default File Exclusions
+
+The action automatically excludes these types of files from review:
+
+- **Package manager files**: `package-lock.json`, `yarn.lock`, `composer.lock`, etc.
+- **Build/distribution**: `dist/`, `build/`, `coverage/`, `node_modules/`, etc.
+- **Environment files**: `.env*` files
+- **Generated files**: `*.min.js`, `*.bundle.js`, etc.
+- **Documentation**: `CHANGELOG.md`, `LICENSE`, etc.
+- **IDE/system files**: `.DS_Store`, `.vscode/`, `.idea/`, etc.
+
+## Review Instructions
+
+Customize the AI review criteria by creating a `review-instructions.md` file in your repository root:
+
+```markdown
+# Custom Review Instructions
+
+Please review this code for:
+
+- Code quality and maintainability
+- Security vulnerabilities
+- Performance optimizations
+- TypeScript best practices
+- React/Vue.js patterns (if applicable)
+
+Focus on providing actionable feedback with specific examples.
+```
 
 1. :hammer_and_wrench: Install the dependencies
 

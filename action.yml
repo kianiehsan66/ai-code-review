@@ -1,7 +1,7 @@
 name: AI Code Review Action
 description:
-  Automatically review code changes using OpenAI and provide detailed feedback
-author: Your name or organization here
+  Automatically review code changes using OpenAI and post detailed feedback as PR comments
+author: AI Code Review Team
 
 # Add your action's branding here. This will appear on the GitHub Marketplace.
 branding:
@@ -35,6 +35,14 @@ inputs:
       "*.lock,dist/*,*.min.js")'
     required: false
     default: ''
+  github-token:
+    description: 'GitHub token for posting PR comments'
+    required: false
+    default: ${{ github.token }}
+  post-comment:
+    description: 'Whether to post review as PR comment'
+    required: false
+    default: 'true'
 
 # Define your outputs here.
 outputs:

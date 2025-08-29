@@ -1,0 +1,35 @@
+# Example workflow file for AI Code Review Action
+# Save this as .github/workflows/ai-code-review.yml
+
+name: AI Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  ai-review:
+    runs-on: ubuntu-latest
+    name: AI Code Review
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: AI Code Review
+        uses: ./ # Use the local action, or replace with your published action
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          openai-model: 'gpt-4'
+          max-tokens: '1500'
+          temperature: '0.1'
+          post-comment: 'true'
+          excluded-files: 'package-lock.json,yarn.lock,dist/*,*.min.js'

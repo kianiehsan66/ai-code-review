@@ -95,23 +95,24 @@ function displayReview(fileName, review) {
 /**
  * Review all changed files with OpenAI
  * @param {Array} files - Array of file objects with fileName and diff
- * @returns {Promise<void>}
+ * @returns {Promise<Array>} Array of review results
  */
 export async function reviewChangesWithAI(files) {
   const config = getOpenAIConfig()
 
   if (!config) {
     core.warning('OpenAI API key not provided. Skipping AI code review.')
-    return
+    return []
   }
 
   if (files.length === 0) {
     core.info('No files to review.')
-    return
+    return []
   }
 
   const openai = createOpenAIClient(config)
   const instructions = loadReviewInstructions()
+  const reviewResults = []
 
   core.info(`🚀 Starting AI code review for ${files.length} file(s)...`)
 
@@ -126,6 +127,12 @@ export async function reviewChangesWithAI(files) {
       config
     )
 
+    // Store review result
+    reviewResults.push({
+      fileName: file.fileName,
+      content: review
+    })
+
     displayReview(file.fileName, review)
 
     // Small delay to avoid rate limiting
@@ -136,6 +143,7 @@ export async function reviewChangesWithAI(files) {
   }
 
   core.info('\n✅ AI code review completed!')
+  return reviewResults
 }
 
 /**
