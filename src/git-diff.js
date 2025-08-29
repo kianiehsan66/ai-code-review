@@ -42,17 +42,104 @@ export async function getBranchDiff() {
 }
 
 /**
+ * Check if a file should be excluded from review
+ * @param {string} fileName - Name of the file to check
+ * @param {Array} customExclusions - Additional exclusion patterns from input
+ * @returns {boolean} True if file should be excluded
+ */
+function shouldExcludeFile(fileName, customExclusions = []) {
+  const defaultExcludePatterns = [
+    // Package manager files
+    'package-lock.json',
+    'yarn.lock',
+    'pnpm-lock.yaml',
+    'composer.lock',
+    'Pipfile.lock',
+    'poetry.lock',
+    'Gemfile.lock',
+
+    // Build/distribution files
+    'dist/',
+    'build/',
+    'coverage/',
+    'node_modules/',
+    'vendor/',
+    '.next/',
+    '.nuxt/',
+
+    // Environment and config files
+    '.env',
+    '.env.local',
+    '.env.production',
+    '.env.development',
+
+    // Generated/compiled files
+    '.min.js',
+    '.min.css',
+    '.bundle.js',
+    '.chunk.js',
+
+    // Documentation and meta files
+    'CHANGELOG.md',
+    'CHANGELOG.txt',
+    'LICENSE',
+    'LICENSE.txt',
+    'LICENSE.md',
+
+    // IDE and system files
+    '.DS_Store',
+    'Thumbs.db',
+    '.vscode/',
+    '.idea/',
+
+    // Log files
+    '*.log',
+    'logs/',
+
+    // Temporary files
+    '*.tmp',
+    '*.temp',
+    '*.cache'
+  ]
+
+  // Combine default patterns with custom exclusions
+  const allPatterns = [...defaultExcludePatterns, ...customExclusions]
+
+  return allPatterns.some((pattern) => {
+    if (pattern.includes('*')) {
+      // Handle wildcard patterns
+      const regex = new RegExp(pattern.replace(/\*/g, '.*'))
+      return regex.test(fileName)
+    } else if (pattern.endsWith('/')) {
+      // Handle directory patterns
+      return fileName.startsWith(pattern) || fileName.includes('/' + pattern)
+    } else {
+      // Handle exact matches
+      return fileName === pattern || fileName.endsWith('/' + pattern)
+    }
+  })
+}
+
+/**
  * Parse git diff output to extract individual file changes
  * @param {string} diffOutput - Raw git diff output
+ * @param {Array} customExclusions - Additional exclusion patterns from input
  * @returns {Array} Array of file change objects
  */
-export function parseGitDiff(diffOutput) {
+export function parseGitDiff(diffOutput, customExclusions = []) {
   const files = []
   const fileRegex = /diff --git a\/(.*?) b\/(.*?)\n/g
   let match
 
   while ((match = fileRegex.exec(diffOutput)) !== null) {
     const fileName = match[1]
+
+    // Skip files that should be excluded from review
+    if (shouldExcludeFile(fileName, customExclusions)) {
+      core.info(`📋 Skipping file (excluded from review): ${fileName}`)
+      continue
+    }
+
     const fileStart = match.index
     const nextFileMatch = fileRegex.exec(diffOutput)
     const fileEnd = nextFileMatch ? nextFileMatch.index : diffOutput.length
@@ -75,9 +162,10 @@ export function parseGitDiff(diffOutput) {
 
 /**
  * Get all changed files with their diffs
+ * @param {Array} customExclusions - Additional exclusion patterns from input
  * @returns {Promise<Array>} Array of changed file objects
  */
-export async function getChangedFiles() {
+export async function getChangedFiles(customExclusions = []) {
   try {
     await fetchMainBranch()
     const diffOutput = await getBranchDiff()
@@ -91,7 +179,7 @@ export async function getChangedFiles() {
     core.debug('Full diff output:')
     core.debug(diffOutput)
 
-    return parseGitDiff(diffOutput)
+    return parseGitDiff(diffOutput, customExclusions)
   } catch (error) {
     throw new Error(`Failed to get changed files: ${error.message}`)
   }

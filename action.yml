@@ -17,6 +17,24 @@ inputs:
   openai-api-key:
     description: 'OpenAI API key for code review'
     required: false
+  openai-model:
+    description: 'OpenAI model to use for code review'
+    required: false
+    default: 'gpt-4'
+  max-tokens:
+    description: 'Maximum tokens for OpenAI response'
+    required: false
+    default: '1000'
+  temperature:
+    description: 'Temperature for OpenAI model (0-2)'
+    required: false
+    default: '0.1'
+  excluded-files:
+    description:
+      'Comma-separated list of file patterns to exclude from review (e.g.,
+      "*.lock,dist/*,*.min.js")'
+    required: false
+    default: ''
 
 # Define your outputs here.
 outputs:

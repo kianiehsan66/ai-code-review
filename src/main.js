@@ -10,7 +10,20 @@ import { getActionConfig } from './config.js'
  */
 async function processBranchChanges() {
   try {
-    const files = await getChangedFiles()
+    // Get custom exclusion patterns from input
+    const excludedFilesInput = core.getInput('excluded-files')
+    const customExclusions = excludedFilesInput
+      ? excludedFilesInput
+          .split(',')
+          .map((pattern) => pattern.trim())
+          .filter(Boolean)
+      : []
+
+    if (customExclusions.length > 0) {
+      core.info(`📋 Custom exclusion patterns: ${customExclusions.join(', ')}`)
+    }
+
+    const files = await getChangedFiles(customExclusions)
 
     if (files.length === 0) {
       core.info('No changes detected between this branch and main.')
